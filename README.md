@@ -1,4 +1,3 @@
-# Automatic Zoom
 ## Programming Project 4: Country Quiz
 **Due:** April 3, 2025
 
@@ -28,4 +27,20 @@ Each team must have 2 students, both of whom are registered in CSCI 4060, or bot
 
 9. **State Saving & Restoring**: Implement state saving and restoring in your app. Specifically, the app should store quiz progress and update the quiz score and how many questions have been answered after each answer is given. The user should be able to continue a quiz if it was interrupted by switching to a different app or a phone call. However, you do not have to implement resuming of a quiz after a device restart.
 
-10. **Discard Partial Quiz**: When the
+10. **Discard Partial Quiz**: When the app is terminated, any partially completed quiz is simply discarded (not stored in the database).
+
+11. **Fresh Quiz Start**: On a fresh start of the app, even if the database already exists, if the user elects to run a quiz, the app should start a new quiz, and any partially finished quizzes should be discarded. Similarly, when viewing the past quizzes, any partial quizzes should not appear in the list.
+
+## Additional Requirements for CSCI 6060/4060 Honors Teams:
+
+12. **App Termination**: The user should be able to terminate the app, but not necessarily in the middle of a quiz.
+
+13. **Advanced Quiz**: Your app must implement an advanced version of the quiz, where, in addition to the country’s continent, the user will be asked to name at least one neighboring country.
+
+14. **Answer Choices**: Here, the user should have 4 choices in random ordering, with a correct answer being one of them.
+
+15. **No Neighbors Option**: Since there exist countries with no neighbors, one of the choices should always include “No neighbors.” For a country with no real neighbors, “No neighbors” would be a correct answer.
+
+16. **Combined Questions**: Both questions (continent and neighbors) should be placed on the same screen in the quiz, if possible.
+
+17. **Neighboring Countries File**: Countries and their neighbors are listed in the file `country_neighbors.csv`, which is available in the Projects folder on eLC. Note that the format of this file is somewhat different from the continents file, as the number_
