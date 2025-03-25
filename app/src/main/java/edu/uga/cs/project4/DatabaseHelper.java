@@ -1,0 +1,54 @@
+package edu.uga.cs.project4;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+public class DatabaseHelper extends SQLiteOpenHelper {
+
+    // Database name and version
+    private static final String DATABASE_NAME = "countries.db";
+    private static final int DATABASE_VERSION = 1;
+
+    // Table name and columns
+    public static final String TABLE_COUNTRIES = "countries";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_COUNTRY_NAME = "country_name";
+    public static final String COLUMN_CONTINENT = "continent";
+
+    // Create table SQL query
+    private static final String TABLE_CREATE =
+            "CREATE TABLE " + TABLE_COUNTRIES + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_COUNTRY_NAME + " TEXT NOT NULL, " +
+                    COLUMN_CONTINENT + " TEXT NOT NULL);";
+
+    // Constructor
+    public DatabaseHelper(Context context) {
+        super(context, context.getDatabasePath(DATABASE_NAME).getAbsolutePath(), null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(TABLE_CREATE);
+        Log.i("DB", "Created DB");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Drop and recreate the table if the database version is upgraded
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COUNTRIES);
+        onCreate(db);
+    }
+
+    // Singleton pattern to ensure only one instance of the DatabaseHelper
+    private static DatabaseHelper instance;
+
+    public static synchronized DatabaseHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+}
