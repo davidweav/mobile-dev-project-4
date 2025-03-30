@@ -13,16 +13,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Table name and columns
     public static final String TABLE_COUNTRIES = "countries";
+
+    public static final String TABLE_RESULTS = "results";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_COUNTRY_NAME = "country_name";
     public static final String COLUMN_CONTINENT = "continent";
 
-    // Create table SQL query
+    public static final String COLUMN_QUIZ_DATE = "quiz_date";
+    private static final String COLUMN_QUIZ_RESULT = "quiz_result";
+
+    // Create country table SQL query
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_COUNTRIES + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_COUNTRY_NAME + " TEXT NOT NULL, " +
                     COLUMN_CONTINENT + " TEXT NOT NULL);";
+
+    // Create results table SQL query
+    private static final String TABLE_CREATE2 =
+            "CREATE TABLE " + TABLE_RESULTS + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_QUIZ_DATE + " TEXT NOT NULL, " +
+                    COLUMN_QUIZ_RESULT + " REAL NOT NULL);";
 
     // Constructor
     public DatabaseHelper(Context context) {
