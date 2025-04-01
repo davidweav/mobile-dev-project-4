@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Project 4</string>
+    <string name="question_template">Name the continent on which %1$s is located:</string>
+    <string name="option_format">%1$s. %2$s</string>
+    <string name="correct_answer">Correct!</string>
+    <string name="incorrect_answer_format">Incorrect. The correct answer is: %1$s</string>
 </resources>

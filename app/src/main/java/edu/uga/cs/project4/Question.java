@@ -3,10 +3,20 @@ package edu.uga.cs.project4;
 public class Question {
 
     private String country;
-
     private String continent;
-
     private String[] incorrectContinents;
+
+    public String getCountry() {
+        return this.country;
+    }
+
+    public String getContinent() {
+        return this.continent;
+    }
+
+    public String[] getIncorrectContinents() {
+        return this.incorrectContinents;
+    }
 
     public Question(String country, String continent, String[] incorrectContinents) {
         this.country = country;

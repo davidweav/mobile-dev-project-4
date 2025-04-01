@@ -10,6 +10,10 @@ public class Quiz {
 
     private int numAnswered;
 
+    public Question[] getQuestions() {
+        return questions;
+    }
+
     public Quiz(Question[] questions) {
         this.questions = questions;
     }
