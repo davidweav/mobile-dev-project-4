@@ -6,16 +6,30 @@ public class Quiz {
 
     private String date;
 
-    private double score;
+    private int score;
 
     private int numAnswered;
 
-    public Question[] getQuestions() {
-        return questions;
-    }
-
     public Quiz(Question[] questions) {
         this.questions = questions;
+        this.score = 0;
+    }
+
+    public void incrementScore() {
+        this.score++;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
+
+    public Question[] getQuestions() {
+        return questions;
+
     }
 
     @Override

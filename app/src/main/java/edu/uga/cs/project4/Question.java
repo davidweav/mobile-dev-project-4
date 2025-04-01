@@ -5,30 +5,32 @@ public class Question {
     private String country;
     private String continent;
     private String[] incorrectContinents;
-
-    public String getCountry() {
-        return this.country;
-    }
-
-    public String getContinent() {
-        return this.continent;
-    }
-
-    public String[] getIncorrectContinents() {
-        return this.incorrectContinents;
-    }
+    private boolean isAnswerCorrect;  // Track if the answer was correct
 
     public Question(String country, String continent, String[] incorrectContinents) {
         this.country = country;
         this.continent = continent;
         this.incorrectContinents = incorrectContinents;
+        this.isAnswerCorrect = false;  // Default to incorrect
     }
 
-    public String toString() {
-        return "Country: " + this.country +  "\n" +
-                "1.) " + this.continent + "\n" +
-                "2.) " + this.incorrectContinents[0] + "\n" +
-                "3.) " + this.incorrectContinents[1];
+    public String getCountry() {
+        return country;
     }
 
+    public String getContinent() {
+        return continent;
+    }
+
+    public String[] getIncorrectContinents() {
+        return incorrectContinents;
+    }
+
+    public boolean isAnswerCorrect() {
+        return isAnswerCorrect;
+    }
+
+    public void setAnswerCorrect(boolean isAnswerCorrect) {
+        this.isAnswerCorrect = isAnswerCorrect;
+    }
 }

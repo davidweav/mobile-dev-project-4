@@ -5,46 +5,31 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
+import androidx.viewpager2.widget.ViewPager2;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizActivity extends AppCompatActivity implements QuestionFragment.OnAnswerSelectedListener{
 
     private SQLiteDatabase db;
     private final String[] contintents = {"Asia", "Oceania", "Europe", "South America", "North America", "Africa"};
     private Quiz quiz;
-    
-    // UI components
-    private FrameLayout questionContainer;
-    private TextView questionNumberTextView;
-    private TextView scoreTextView;
-    private Button nextButton;
-    private Button prevButton;
-    private Button submitButton;
-    
+
     // Quiz state
     private int currentQuestionIndex = 0;
     private int score = 0;
-    private boolean[] answeredQuestions;
-    private QuestionView currentQuestionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_quiz);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -54,118 +39,31 @@ public class QuizActivity extends AppCompatActivity {
         // Initialize the quiz
         quiz = intializeQuiz();
         Log.i("Quiz Object", quiz.toString());
-        
-        // Initialize answeredQuestions array
-        answeredQuestions = new boolean[quiz.getQuestions().length];
-        
-        // Initialize UI components
-        initializeUI();
-        
-        // Display the first question
-        displayQuestion(currentQuestionIndex);
-        
-        // Set up button click listeners
-        setupButtonListeners();
+
+        ViewPager2 pager = findViewById(R.id.viewpager);
+        QuestionAdapter questionAdapter = new QuestionAdapter(
+                getSupportFragmentManager(), getLifecycle(), quiz.getQuestions());
+        pager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+        pager.setAdapter(questionAdapter);
+
     }
-    
-    private void initializeUI() {
-        // Find views from layout
-        questionContainer = findViewById(R.id.questionContainer);
-        questionNumberTextView = findViewById(R.id.questionNumberTextView);
-        scoreTextView = findViewById(R.id.scoreTextView);
-        nextButton = findViewById(R.id.nextButton);
-        prevButton = findViewById(R.id.previousButton);
-        submitButton = findViewById(R.id.submitButton);
-        
-        // Initialize the score display
-        updateScoreDisplay();
-    }
-    
-    private void setupButtonListeners() {
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentQuestionIndex < quiz.getQuestions().length - 1) {
-                    currentQuestionIndex++;
-                    displayQuestion(currentQuestionIndex);
-                } else {
-                    Toast.makeText(QuizActivity.this, "This is the last question", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        
-        prevButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentQuestionIndex > 0) {
-                    currentQuestionIndex--;
-                    displayQuestion(currentQuestionIndex);
-                } else {
-                    Toast.makeText(QuizActivity.this, "This is the first question", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentQuestionView != null) {
-                    boolean isCorrect = currentQuestionView.checkAnswer();
-                    
-                    // Only update score if this question hasn't been answered correctly before
-                    if (isCorrect && !answeredQuestions[currentQuestionIndex]) {
-                        score++;
-                        answeredQuestions[currentQuestionIndex] = true;
-                        updateScoreDisplay();
-                    }
-                    
-                    // Check if quiz is complete
-                    checkQuizCompletion();
-                }
-            }
-        });
-    }
-    
-    private void displayQuestion(int index) {
-        // Update question number display
-        questionNumberTextView.setText("Question " + (index + 1) + " of " + quiz.getQuestions().length);
-        
-        // Clear previous question view
-        questionContainer.removeAllViews();
-        
-        // Create new question view for current question
-        currentQuestionView = new QuestionView(this);
-        currentQuestionView.setQuestion(quiz.getQuestions()[index]);
-        
-        // Add to container
-        questionContainer.addView(currentQuestionView);
-    }
-    
-    private void updateScoreDisplay() {
-        scoreTextView.setText("Score: " + score + "/" + quiz.getQuestions().length);
-    }
-    
-    private void checkQuizCompletion() {
-        boolean allAnswered = true;
-        for (boolean answered : answeredQuestions) {
-            if (!answered) {
-                allAnswered = false;
-                break;
-            }
+
+    /**
+     * Updates the score based on the selected answer for the previous question.
+     */
+    private void updateScoreOnSwipe() {
+        Question currentQuestion = quiz.getQuestions()[currentQuestionIndex];
+
+        // Check if the previous answer was correct
+        if (currentQuestion.isAnswerCorrect()) {
+            score++;  // Increment score if the answer was correct
         }
-        
-        if (allAnswered) {
-            // All questions have been answered correctly
-            Toast.makeText(this, "Quiz complete! Final score: " + score + "/" + 
-                    quiz.getQuestions().length, Toast.LENGTH_LONG).show();
-            
-            // You could also navigate to a results screen here
-            // Intent intent = new Intent(QuizActivity.this, ResultsActivity.class);
-            // intent.putExtra("SCORE", score);
-            // intent.putExtra("TOTAL", quiz.getQuestions().length);
-            // startActivity(intent);
-            // finish();
-        }
+
+        // Update the score in the Quiz object
+        quiz.setScore(score);
+
+        // Log and display the updated score
+        Log.i("Score", "Score: " + quiz.getScore());
     }
 
     /**
@@ -186,7 +84,6 @@ public class QuizActivity extends AppCompatActivity {
             String continent = cursor.getString(2);
 
             Country country = new Country(id, countryName, continent);
-            Log.i("Country Object", country.toString());
             countries.add(country);
         }
 
@@ -214,11 +111,18 @@ public class QuizActivity extends AppCompatActivity {
 
             Question question = new Question(country.getName(), country.getContinent(), incorrectContinents);
             questions.add(question);
-            Log.i("Question Object", question.toString());
         }
 
         // Construct a quiz with a question array
         Question[] questionsArray = new Question[questions.size()];
         return new Quiz(questions.toArray(questionsArray));
+    }
+
+    @Override
+    public void onAnswerSelected(boolean isCorrect) {
+        if (isCorrect) {
+            quiz.incrementScore();
+        }
+        Log.i("Score ", "Score: " + quiz.getScore());
     }
 }
