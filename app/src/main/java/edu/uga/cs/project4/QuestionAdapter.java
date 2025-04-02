@@ -20,11 +20,17 @@ public class QuestionAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         // Return a new instance of QuestionFragment for each question
-        return QuestionFragment.newInstance(questions[position], position + 1);
+
+        if (position < questions.length) {
+            return QuestionFragment.newInstance(questions[position], position + 1);
+        }
+        else {
+            return new Fragment();
+        }
     }
 
     @Override
     public int getItemCount() {
-        return questions.length;
+        return questions.length + 1;
     }
 }

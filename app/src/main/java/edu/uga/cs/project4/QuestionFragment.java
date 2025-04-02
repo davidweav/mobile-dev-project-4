@@ -18,6 +18,7 @@ public class QuestionFragment extends Fragment {
     private static final String ARG_INCORRECT_CONTINENTS = "incorrectContinents";
     private static final String ARG_QUESTION_NUMBER = "questionNumber";
 
+    private boolean isCorrect = false;
     private String mCountry;
     private String mContinent;
     private String[] mIncorrectContinents;
@@ -27,7 +28,7 @@ public class QuestionFragment extends Fragment {
 
     // Interface to communicate with the parent activity
     public interface OnAnswerSelectedListener {
-        void onAnswerSelected(boolean isCorrect);
+        void onAnswerSelected(boolean isCorrect, boolean isChanged);
     }
     private OnAnswerSelectedListener mListener;
 
@@ -59,6 +60,8 @@ public class QuestionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question, container, false);
 
@@ -94,18 +97,19 @@ public class QuestionFragment extends Fragment {
     public void onPause() {
         super.onPause();
         Log.i("Info", "onPause");
+        if (mSelectedAnswer == null) {
+            return;
+        }
         // Emit the event and notify the activity whether the answer is correct
-        if (mListener != null && mSelectedAnswer != null) {
-            Log.i("Info", mSelectedAnswer);
-            boolean isCorrect = mSelectedAnswer.equals(mContinent);
-            mListener.onAnswerSelected(isCorrect);
+        if (mListener != null && mSelectedAnswer != null && !isCorrect) {
+            Log.i("Info", "Selected: " + mSelectedAnswer);
+            isCorrect = mSelectedAnswer.equals(mContinent);
+            mListener.onAnswerSelected(isCorrect, false);
+        }
+        else if (isCorrect != mSelectedAnswer.equals(mContinent)) {
+            isCorrect = mSelectedAnswer.equals(mContinent);
+            mListener.onAnswerSelected(isCorrect, true);
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i("Info", "onResume");
-
-    }
 }

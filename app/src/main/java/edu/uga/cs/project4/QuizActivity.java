@@ -1,6 +1,7 @@
 package edu.uga.cs.project4;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -45,6 +46,26 @@ public class QuizActivity extends AppCompatActivity implements QuestionFragment.
                 getSupportFragmentManager(), getLifecycle(), quiz.getQuestions());
         pager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         pager.setAdapter(questionAdapter);
+
+        // Inside onCreate() after setting up the pager...
+        pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                currentQuestionIndex = position;
+                Log.i("Page Swiped", "Current Question Index: " + currentQuestionIndex);
+                Log.i("Page Swiped", "Position: " + position);
+                // If we've reached the last (results) page...
+                if (position == quiz.getQuestions().length) {
+                    Log.i("Results Activity", "Results Activity being created");
+                    Intent intent = new Intent(QuizActivity.this, ResultsActivity.class);
+                    intent.putExtra("score", quiz.getScore());
+                    intent.putExtra("total", quiz.getQuestions().length);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
 
     }
 
@@ -119,9 +140,13 @@ public class QuizActivity extends AppCompatActivity implements QuestionFragment.
     }
 
     @Override
-    public void onAnswerSelected(boolean isCorrect) {
+    public void onAnswerSelected(boolean isCorrect, boolean isChanged) {
+        int cur = quiz.getScore();
         if (isCorrect) {
-            quiz.incrementScore();
+            quiz.setScore(cur + 1);
+        }
+        else if (!isCorrect && isChanged) {
+            quiz.setScore(cur - 1);
         }
         Log.i("Score ", "Score: " + quiz.getScore());
     }
