@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CONTINENT = "continent";
 
     public static final String COLUMN_QUIZ_DATE = "quiz_date";
-    private static final String COLUMN_QUIZ_RESULT = "quiz_result";
+    public static final String COLUMN_QUIZ_RESULT = "quiz_result";
 
     // Create country table SQL query
     private static final String TABLE_CREATE =
@@ -44,6 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE);
+        db.execSQL(TABLE_CREATE2);
         Log.i("DB", "Created DB");
     }
 
@@ -51,6 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop and recreate the table if the database version is upgraded
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COUNTRIES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESULTS);
         onCreate(db);
     }
 
