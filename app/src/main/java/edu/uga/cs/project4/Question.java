@@ -1,6 +1,8 @@
 package edu.uga.cs.project4;
 
-public class Question {
+import java.io.Serializable;
+
+public class Question implements Serializable {
 
     private String country;
     private String continent;
@@ -32,5 +34,14 @@ public class Question {
 
     public void setAnswerCorrect(boolean isAnswerCorrect) {
         this.isAnswerCorrect = isAnswerCorrect;
+    }
+    
+    @Override
+    public String toString() {
+        return "Question{" +
+                "country='" + country + '\'' +
+                ", continent='" + continent + '\'' +
+                ", isAnswerCorrect=" + isAnswerCorrect +
+                '}';
     }
 }

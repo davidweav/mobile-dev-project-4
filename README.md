@@ -10,15 +10,15 @@
 
 ✅6. **Quiz Results**: Once the user answers all the questions in a quiz, the app should display the result of the quiz. This should be right after the final swipe, following the final question. The app should store the date of the quiz and the result in the SQLite database. Again, this should be done using an AsyncTask.
 
-7. **Viewing Results**: From the splash screen, or from the results screen of the current quiz, the user should be able to view their prior quizzes and results or start another quiz. The results should include the date and the score of each prior quiz (not the individual answers). Database retrieval should be done within an AsyncTask, as well.
+✅7. **Viewing Results**: From the splash screen, or from the results screen of the current quiz, the user should be able to view their prior quizzes and results or start another quiz. The results should include the date and the score of each prior quiz (not the individual answers). Database retrieval should be done within an AsyncTask, as well.
 
 8. **Navigation Drawer (Optional)**: You may incorporate the navigation drawer in your app if you would like.
 
-9. **State Saving & Restoring**: Implement state saving and restoring in your app. Specifically, the app should store quiz progress and update the quiz score and how many questions have been answered after each answer is given. The user should be able to continue a quiz if it was interrupted by switching to a different app or a phone call. However, you do not have to implement resuming of a quiz after a device restart.
+✅9. **State Saving & Restoring**: Implement state saving and restoring in your app. Specifically, the app should store quiz progress and update the quiz score and how many questions have been answered after each answer is given. The user should be able to continue a quiz if it was interrupted by switching to a different app or a phone call. However, you do not have to implement resuming of a quiz after a device restart.
 
-10. **Discard Partial Quiz**: When the app is terminated, any partially completed quiz is simply discarded (not stored in the database).
+✅10. **Discard Partial Quiz**: When the app is terminated, any partially completed quiz is simply discarded (not stored in the database).
 
-11. **Fresh Quiz Start**: On a fresh start of the app, even if the database already exists, if the user elects to run a quiz, the app should start a new quiz, and any partially finished quizzes should be discarded. Similarly, when viewing the past quizzes, any partial quizzes should not appear in the list.
+✅11. **Fresh Quiz Start**: On a fresh start of the app, even if the database already exists, if the user elects to run a quiz, the app should start a new quiz, and any partially finished quizzes should be discarded. Similarly, when viewing the past quizzes, any partial quizzes should not appear in the list.
 
 ## Additional Requirements for CSCI 6060/4060 Honors Teams:
 

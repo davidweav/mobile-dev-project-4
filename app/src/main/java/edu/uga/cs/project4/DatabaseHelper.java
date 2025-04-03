@@ -9,7 +9,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database name and version
     private static final String DATABASE_NAME = "countries.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Table name and columns
     public static final String TABLE_COUNTRIES = "countries";
@@ -43,9 +43,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d("DatabaseHelper", "About to create countries table");
         db.execSQL(TABLE_CREATE);
+        Log.d("DatabaseHelper", "Created countries table");
+        
+        Log.d("DatabaseHelper", "About to create results table");
         db.execSQL(TABLE_CREATE2);
-        Log.i("DB", "Created DB");
+        Log.d("DatabaseHelper", "Created results table");
     }
 
     @Override

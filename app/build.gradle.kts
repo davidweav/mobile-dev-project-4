@@ -42,4 +42,5 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation("com.opencsv:opencsv:5.10")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
