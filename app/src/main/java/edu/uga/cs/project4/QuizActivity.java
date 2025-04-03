@@ -47,13 +47,23 @@ public class QuizActivity extends AppCompatActivity implements QuestionFragment.
             return insets;
         });
 
-        // Check if the user explicitly requested a new quiz
+        // Check if the user wants to continue a quiz or start a new one
+        boolean continueQuiz = getIntent().getBooleanExtra("continue_quiz", false);
         boolean forceNewQuiz = getIntent().getBooleanExtra("start_new_quiz", false);
 
         // Restore or initialize the quiz
         if (savedInstanceState != null && !forceNewQuiz) {
             // Only restore state from savedInstanceState if not explicitly requesting new quiz
             restoreQuizState(savedInstanceState);
+        } else if (continueQuiz) {
+            // Explicitly continuing an existing quiz from SharedPreferences
+            if (!restoreQuizStateFromPrefs()) {
+                // Fallback to a new quiz if restoration fails
+                quiz = initializeQuiz();
+                Log.i("Quiz Object", "Failed to restore quiz, created new one: " + quiz.toString());
+            } else {
+                Log.i("Quiz Object", "Successfully restored quiz: " + quiz.toString());
+            }
         } else if (!forceNewQuiz) {
             // Try to restore from SharedPreferences only if not explicitly starting new quiz
             if (!restoreQuizStateFromPrefs()) {

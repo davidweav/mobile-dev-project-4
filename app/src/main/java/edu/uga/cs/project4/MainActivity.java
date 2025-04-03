@@ -12,11 +12,17 @@ import androidx.core.view.WindowInsetsCompat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button startQuizBtn;
     private Button resultsBtn;
+    private static final String PREFS_NAME = "QuizPrefs";
+    private static final String KEY_QUIZ_STATE = "quizState";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +45,33 @@ public class MainActivity extends AppCompatActivity {
         startQuizBtn = findViewById(R.id.startQuizButton);
         resultsBtn = findViewById(R.id.viewPastResultsButton);
         
-
         startQuizBtn.setOnClickListener((view) -> {
-            // Clear any existing quiz state before starting a new quiz
-            clearAnyExistingQuizState();
-
-            Intent intent = new Intent(this, QuizActivity.class);
-            startActivity(intent);
+            // Check if there's an in-progress quiz
+            if (hasInProgressQuiz()) {
+                // Ask the user if they want to continue the quiz or start a new one
+                new AlertDialog.Builder(this)
+                    .setTitle("Continue Quiz")
+                    .setMessage("You have an unfinished quiz. Would you like to continue it?")
+                    .setPositiveButton("Continue", (dialog, which) -> {
+                        // Continue the in-progress quiz
+                        Intent intent = new Intent(this, QuizActivity.class);
+                        intent.putExtra("continue_quiz", true);
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("New Quiz", (dialog, which) -> {
+                        // Start a new quiz
+                        clearAnyExistingQuizState();
+                        Intent intent = new Intent(this, QuizActivity.class);
+                        intent.putExtra("start_new_quiz", true);
+                        startActivity(intent);
+                    })
+                    .show();
+            } else {
+                // No in-progress quiz, start a new one
+                Intent intent = new Intent(this, QuizActivity.class);
+                intent.putExtra("start_new_quiz", true);
+                startActivity(intent);
+            }
         });
 
         resultsBtn.setOnClickListener(view -> {
@@ -53,16 +79,39 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
-
-    private void clearAnyExistingQuizState() {
-        SharedPreferences prefs = getSharedPreferences("QuizPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
-        editor.apply();
+    
+    /**
+     * Check if there's an in-progress quiz saved
+     */
+    private boolean hasInProgressQuiz() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String quizJson = prefs.getString(KEY_QUIZ_STATE, null);
         
-        // Also clear from our main quiz preferences
-        prefs = getSharedPreferences("QuizPrefs", Context.MODE_PRIVATE);
-        editor = prefs.edit();
+        if (quizJson != null) {
+            // If there's saved quiz data, verify it's a valid quiz
+            try {
+                Gson gson = new Gson();
+                Quiz quiz = gson.fromJson(quizJson, Quiz.class);
+                
+                // Check if the quiz is valid and not completed
+                if (quiz != null && !quiz.isCompleted()) {
+                    Log.d("MainActivity", "Found in-progress quiz with " + 
+                            quiz.getNumAnswered() + " answers and score " + quiz.getScore());
+                    return true;
+                }
+            } catch (Exception e) {
+                Log.e("MainActivity", "Error parsing saved quiz", e);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Clears any existing quiz state to ensure a fresh start
+     */
+    private void clearAnyExistingQuizState() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
         editor.apply();
         
